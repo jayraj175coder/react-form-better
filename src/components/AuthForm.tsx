@@ -19,8 +19,8 @@ const InputField = ({
   type: string;
   placeholder?: string;
 }) => (
-  <div className="mb-4">
-    <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+  <div className="mb-6">
+    <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-2">
       {label}
     </label>
     <Field
@@ -28,9 +28,9 @@ const InputField = ({
       id={id}
       name={name}
       placeholder={placeholder}
-      className="w-full p-3 border border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+      className="w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
     />
-    <ErrorMessage name={name} component="div" className="text-red-500 text-xs" />
+    <ErrorMessage name={name} component="div" className="text-red-500 text-xs mt-1" />
   </div>
 );
 
@@ -64,7 +64,7 @@ const AuthForm: React.FC = () => {
 
   return (
     <div className="max-w-md mx-auto bg-white p-8 rounded-xl shadow-xl mt-10">
-      <h2 className="text-3xl font-semibold mb-6 text-center">
+      <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">
         {isLoggingIn ? 'Login' : 'Sign Up'}
       </h2>
 
@@ -96,29 +96,29 @@ const AuthForm: React.FC = () => {
                 type="email"
                 placeholder="Enter your email"
               />
-              <div className="mb-4">
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <div className="mb-6">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                   Password
                 </label>
                 <Field
                   type="password"
                   id="password"
                   name="password"
-                  className={`w-full p-3 border ${
+                  className={`w-full p-4 border ${
                     touched.password && errors.password
                       ? 'border-red-500'
                       : touched.password && !errors.password
                       ? 'border-green-500'
                       : 'border-gray-300'
-                  } rounded-md mt-1 focus:ring-2 focus:ring-blue-500`}
+                  } rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300`}
                 />
-                <ErrorMessage name="password" component="div" className="text-red-500 text-xs" />
+                <ErrorMessage name="password" component="div" className="text-red-500 text-xs mt-1" />
                 <div className="mt-2 text-sm">
                   Password Strength:{' '}
                   <span
                     className={`font-semibold ${
                       PasswordStrengthIndicator({ password: values.password }) === 'strong'
-                      ? 'text-green-600'
+                        ? 'text-green-600'
                         : PasswordStrengthIndicator({ password: values.password }) === 'medium'
                         ? 'text-yellow-600'
                         : 'text-red-600'
@@ -137,9 +137,7 @@ const AuthForm: React.FC = () => {
               />
               <button
                 type="submit"
-                className={`w-full ${
-                  isLoading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'
-                } text-white py-3 rounded-md mt-4`}
+                className={`w-full ${isLoading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'} text-white py-3 rounded-lg mt-4 transition duration-300`}
                 disabled={isLoading}
               >
                 {isLoading ? 'Submitting...' : 'Sign Up'}
@@ -154,7 +152,7 @@ const AuthForm: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsLoggingIn(true)}
-            className="w-full bg-green-600 text-white py-3 rounded-md hover:bg-green-700"
+            className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition duration-300"
           >
             Go to Login
           </button>
@@ -188,9 +186,7 @@ const AuthForm: React.FC = () => {
             />
             <button
               type="submit"
-              className={`w-full ${
-                isLoading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'
-              } text-white py-3 rounded-md mt-4`}
+              className={`w-full ${isLoading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'} text-white py-3 rounded-lg mt-4 transition duration-300`}
               disabled={isLoading}
             >
               {isLoading ? 'Logging in...' : 'Login'}

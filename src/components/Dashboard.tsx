@@ -13,7 +13,7 @@ const Dashboard: React.FC = () => {
           Unlock your potential and explore endless possibilities with creativity.
         </p>
         <button className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300">
-          Get Started
+          Start Today!
         </button>
       </div>
     </div>

@@ -1,134 +1,151 @@
 import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import { useNavigate } from 'react-router-dom'; // Now works as it's within Router context
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { signUpSchema, loginSchema } from '../utils/validationSchemas'; // Adjusted path
+import PasswordStrengthIndicator from './PasswordStrengthIndicator';
+
+// Reusable Input Field Component
+const InputField = ({
+  label,
+  id,
+  name,
+  type,
+  placeholder,
+}: {
+  label: string;
+  id: string;
+  name: string;
+  type: string;
+  placeholder?: string;
+}) => (
+  <div className="mb-4">
+    <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+      {label}
+    </label>
+    <Field
+      type={type}
+      id={id}
+      name={name}
+      placeholder={placeholder}
+      className="w-full p-3 border border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+    />
+    <ErrorMessage name={name} component="div" className="text-red-500 text-xs" />
+  </div>
+);
 
 const AuthForm: React.FC = () => {
   const [isSignedUp, setIsSignedUp] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const navigate = useNavigate();  // Now works correctly
-
-  // SignUp Form Initial Values and Validation
-  const signUpInitialValues = {
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    rememberMe: false,
-  };
-
-  const signUpValidationSchema = Yup.object({
-    name: Yup.string().required('Name is required'),
-    email: Yup.string().email('Invalid email').required('Email is required'),
-    password: Yup.string()
-      .min(8, 'Password must be at least 8 characters')
-      .required('Password is required'),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password')], 'Passwords must match')
-      .required('Confirm Password is required'),
-  });
-
-  // Login Form Initial Values and Validation
-  const loginInitialValues = {
-    email: '',
-    password: '',
-    rememberMe: false,
-  };
-
-  const loginValidationSchema = Yup.object({
-    email: Yup.string().email('Invalid email').required('Email is required'),
-    password: Yup.string().required('Password is required'),
-  });
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Handle SignUp Form Submit
-  const handleSignUpSubmit = (values: typeof signUpInitialValues) => {
+  const handleSignUpSubmit = (values: any) => {
     console.log('Sign Up Data:', values);
-    setIsSignedUp(true);
-    toast.success('Sign Up Successful!');
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsSignedUp(true);
+      setIsLoading(false);
+      toast.success('Sign Up Successful!');
+    }, 1000);
   };
 
   // Handle Login Form Submit
-  const handleLoginSubmit = (values: typeof loginInitialValues) => {
+  const handleLoginSubmit = (values: any) => {
     console.log('Login Data:', values);
-    toast.success('Login Successful!');
+    setIsLoading(true);
     setTimeout(() => {
-      navigate('/dashboard');  // Redirects to dashboard after login
-    }, 2000);
+      toast.success('Login Successful!');
+      setIsLoading(false);
+      navigate('/dashboard');
+    }, 1000);
   };
 
   return (
     <div className="max-w-md mx-auto bg-white p-8 rounded-xl shadow-xl mt-10">
-      <h2 className="text-3xl font-semibold mb-6 text-center">{isLoggingIn ? 'Login' : 'Sign Up'}</h2>
+      <h2 className="text-3xl font-semibold mb-6 text-center">
+        {isLoggingIn ? 'Login' : 'Sign Up'}
+      </h2>
 
       {!isLoggingIn && !isSignedUp && (
         <Formik
-          initialValues={signUpInitialValues}
-          validationSchema={signUpValidationSchema}
+          initialValues={{
+            name: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+            rememberMe: false,
+          }}
+          validationSchema={signUpSchema}
           onSubmit={handleSignUpSubmit}
         >
-          <Form>
-            <div className="mb-4">
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-              <Field
-                type="text"
+          {({ values, touched, errors }) => (
+            <Form>
+              <InputField
+                label="Name"
                 id="name"
                 name="name"
-                className="w-full p-3 border border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+                type="text"
+                placeholder="Enter your name"
               />
-              <ErrorMessage name="name" component="div" className="text-red-500 text-xs" />
-            </div>
-
-            <div className="mb-4">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-              <Field
-                type="email"
+              <InputField
+                label="Email"
                 id="email"
                 name="email"
-                className="w-full p-3 border border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+                type="email"
+                placeholder="Enter your email"
               />
-              <ErrorMessage name="email" component="div" className="text-red-500 text-xs" />
-            </div>
-
-            <div className="mb-4">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-              <Field
-                type="password"
-                id="password"
-                name="password"
-                className="w-full p-3 border border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
-              />
-              <ErrorMessage name="password" component="div" className="text-red-500 text-xs" />
-            </div>
-
-            <div className="mb-4">
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm Password</label>
-              <Field
-                type="password"
+              <div className="mb-4">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  Password
+                </label>
+                <Field
+                  type="password"
+                  id="password"
+                  name="password"
+                  className={`w-full p-3 border ${
+                    touched.password && errors.password
+                      ? 'border-red-500'
+                      : touched.password && !errors.password
+                      ? 'border-green-500'
+                      : 'border-gray-300'
+                  } rounded-md mt-1 focus:ring-2 focus:ring-blue-500`}
+                />
+                <ErrorMessage name="password" component="div" className="text-red-500 text-xs" />
+                <div className="mt-2 text-sm">
+                  Password Strength:{' '}
+                  <span
+                    className={`font-semibold ${
+                      PasswordStrengthIndicator({ password: values.password }) === 'strong'
+                      ? 'text-green-600'
+                        : PasswordStrengthIndicator({ password: values.password }) === 'medium'
+                        ? 'text-yellow-600'
+                        : 'text-red-600'
+                    }`}
+                  >
+                    {PasswordStrengthIndicator({ password: values.password })}
+                  </span>
+                </div>
+              </div>
+              <InputField
+                label="Confirm Password"
                 id="confirmPassword"
                 name="confirmPassword"
-                className="w-full p-3 border border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+                type="password"
+                placeholder="Re-enter your password"
               />
-              <ErrorMessage name="confirmPassword" component="div" className="text-red-500 text-xs" />
-            </div>
-
-            <div className="flex items-center mb-4">
-              <Field
-                type="checkbox"
-                id="rememberMe"
-                name="rememberMe"
-                className="mr-2 h-4 w-4 border-gray-300 rounded"
-              />
-              <label htmlFor="rememberMe" className="text-sm text-gray-700">Remember Me</label>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-3 rounded-md mt-4 hover:bg-blue-700"
-            >
-              Sign Up
-            </button>
-          </Form>
+              <button
+                type="submit"
+                className={`w-full ${
+                  isLoading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'
+                } text-white py-3 rounded-md mt-4`}
+                disabled={isLoading}
+              >
+                {isLoading ? 'Submitting...' : 'Sign Up'}
+              </button>
+            </Form>
+          )}
         </Formik>
       )}
 
@@ -136,7 +153,7 @@ const AuthForm: React.FC = () => {
         <div className="mt-4 text-center">
           <button
             type="button"
-            onClick={() => setIsLoggingIn(true)} 
+            onClick={() => setIsLoggingIn(true)}
             className="w-full bg-green-600 text-white py-3 rounded-md hover:bg-green-700"
           >
             Go to Login
@@ -146,48 +163,37 @@ const AuthForm: React.FC = () => {
 
       {isLoggingIn && (
         <Formik
-          initialValues={loginInitialValues}
-          validationSchema={loginValidationSchema}
+          initialValues={{
+            email: '',
+            password: '',
+            rememberMe: false,
+          }}
+          validationSchema={loginSchema}
           onSubmit={handleLoginSubmit}
         >
           <Form>
-            <div className="mb-4">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-              <Field
-                type="email"
-                id="email"
-                name="email"
-                className="w-full p-3 border border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
-              />
-              <ErrorMessage name="email" component="div" className="text-red-500 text-xs" />
-            </div>
-
-            <div className="mb-4">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-              <Field
-                type="password"
-                id="password"
-                name="password"
-                className="w-full p-3 border border-gray-300 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
-              />
-              <ErrorMessage name="password" component="div" className="text-red-500 text-xs" />
-            </div>
-
-            <div className="flex items-center mb-4">
-              <Field
-                type="checkbox"
-                id="rememberMe"
-                name="rememberMe"
-                className="mr-2 h-4 w-4 border-gray-300 rounded"
-              />
-              <label htmlFor="rememberMe" className="text-sm text-gray-700">Remember Me</label>
-            </div>
-
+            <InputField
+              label="Email"
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Enter your email"
+            />
+            <InputField
+              label="Password"
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Enter your password"
+            />
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-3 rounded-md mt-4 hover:bg-blue-700"
+              className={`w-full ${
+                isLoading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'
+              } text-white py-3 rounded-md mt-4`}
+              disabled={isLoading}
             >
-              Login
+              {isLoading ? 'Logging in...' : 'Login'}
             </button>
           </Form>
         </Formik>

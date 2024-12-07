@@ -22,11 +22,11 @@ This project is a simple React-based authentication form that includes both a si
 
   ```bash
   npm install
-  Run the app in development mode.
 
-  ```bash
+3.Run the app in development mode.
 
-   npm start
+   ```bash
+    npm start
 
 ## Design Choices
 
